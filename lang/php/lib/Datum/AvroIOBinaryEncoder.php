@@ -23,6 +23,7 @@ namespace Apache\Avro\Datum;
 use Apache\Avro\Avro;
 use Apache\Avro\AvroGMP;
 use Apache\Avro\AvroIO;
+use Apache\Avro\AvroVarint;
 
 /**
  * Encodes and writes Avro data to an AvroIO object using
@@ -101,13 +102,7 @@ class AvroIOBinaryEncoder
     {
         $n = (int) $n;
         $n = ($n << 1) ^ ($n >> 63);
-        $str = '';
-        while (0 != ($n & ~0x7F)) {
-            $str .= chr(($n & 0x7F) | 0x80);
-            $n >>= 7;
-        }
-        $str .= chr($n);
-        return $str;
+        return AvroVarint::encodeLong($n);
     }
 
     /**

@@ -25,6 +25,7 @@ use Apache\Avro\Avro;
 use Apache\Avro\AvroException;
 use Apache\Avro\AvroGMP;
 use Apache\Avro\AvroIO;
+use Apache\Avro\AvroVarint;
 
 /**
  * Decodes and reads Avro data from an AvroIO object encoded using
@@ -116,15 +117,7 @@ class AvroIOBinaryDecoder
      */
     public static function decodeLongFromArray($bytes)
     {
-        $b = array_shift($bytes);
-        $n = $b & 0x7f;
-        $shift = 7;
-        while (0 != ($b & 0x80)) {
-            $b = array_shift($bytes);
-            $n |= (($b & 0x7f) << $shift);
-            $shift += 7;
-        }
-        return (($n >> 1) ^ -($n & 1));
+        return AvroVarint::decodeLong($bytes);
     }
 
     /**
